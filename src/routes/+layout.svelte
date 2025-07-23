@@ -11,7 +11,7 @@
 	let adding = $state(false);
 </script>
 
-<div class="flex max-h-screen min-h-screen w-screen flex-col bg-zinc-900 text-zinc-200">
+<div class="flex h-[100svh] w-screen flex-col bg-zinc-900 text-zinc-200">
 	<header class="flex w-screen items-center justify-between gap-4 bg-zinc-800 px-8 py-2">
 		<h1 class="text-xl font-bold">
 			<span class="text-fuchsia-300">BIER</span>.<span class="text-sky-300">instituutegel</span
@@ -21,11 +21,11 @@
 			<p class="text-md overflow-hidden font-semibold text-ellipsis"><u>{name.state}</u></p>
 		{/if}
 	</header>
-	<div class="relative flex h-full flex-col items-center overflow-y-auto">
+	<div class="relative flex flex-grow flex-col items-center overflow-y-auto">
 		{#if socket.joever}
 			<p>It's SO Joever</p>
 		{:else}
-			<div class="flex flex-col px-8 py-2">
+			<div class="flex h-full flex-col items-center gap-2 px-8 py-2">
 				{@render children()}
 			</div>
 
@@ -59,6 +59,7 @@
 								name="code"
 								placeholder="De code?"
 								autofocus
+								required
 							/>
 							<div class="rounded-md bg-fuchsia-700 p-px">
 								<button
@@ -89,6 +90,9 @@
 								type="text"
 								name="name"
 								placeholder="Joep v.d. TV show"
+								required
+								minlength="3"
+								maxlength="32"
 								autofocus
 							/>
 							<div class="rounded-md bg-fuchsia-700 p-px">
@@ -131,6 +135,8 @@
 									list="beers"
 									required
 									autofocus
+									minlength="3"
+									maxlength="32"
 								/>
 								<datalist id="beers">
 									{#each ranking.beers as beer}

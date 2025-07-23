@@ -10,7 +10,7 @@ class Socket {
 
 	public askCode = $state(false);
 	public askName = $state(false);
-	public joever = $state(false);
+	public joever = $state('');
 
 	private confirmedCode = false;
 	private confirmedName = false;
@@ -24,7 +24,7 @@ class Socket {
 		this.ws = ws;
 
 		const ws_ = new WebSocket(dev ? 'http://localhost:3000' : 'https://api.bier.instituutegel.nl');
-		ws_.onerror = () => (this.joever = true);
+		ws_.onerror = () => (this.joever = "C'est joever...");
 		ws_.onopen = () => {
 			res(ws_);
 			ws_.send(JSON.stringify({ code: code.state, name: name.state }));
@@ -33,6 +33,9 @@ class Socket {
 			console.log(e.data);
 
 			switch (e.data) {
+				case 'wees geen snuif':
+					this.joever = 'wees geen snuif';
+					return;
 				case 'nuh uh':
 					if (code.state !== '') error.set('Nuh uh');
 					this.askCode = true;
