@@ -25,7 +25,7 @@
 		{#if socket.joever}
 			<p>It's SO Joever</p>
 		{:else}
-			<div class="flex h-full flex-col items-center gap-2 px-8 py-2">
+			<div class="flex h-full w-full flex-col items-center gap-2 px-8 py-2">
 				{@render children()}
 			</div>
 
