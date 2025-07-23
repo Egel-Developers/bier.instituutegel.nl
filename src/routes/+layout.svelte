@@ -21,7 +21,7 @@
 			<p class="text-md overflow-hidden font-semibold text-ellipsis"><u>{name.state}</u></p>
 		{/if}
 	</header>
-	<div class="relative flex flex-grow flex-col items-center">
+	<div class="relative flex h-full flex-col items-center overflow-y-auto">
 		{#if socket.joever}
 			<p>It's SO Joever</p>
 		{:else}
