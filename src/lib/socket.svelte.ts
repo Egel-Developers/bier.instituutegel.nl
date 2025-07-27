@@ -1,9 +1,10 @@
 import { browser, dev } from '$app/environment';
 import { code } from './code.svelte';
+import { Decoder } from './decoder';
+import { Encoder } from './encoder';
 import { error } from './error.svelte';
 import { name } from './name.svelte';
-import { ranking } from './ranking.svelte';
-import { unflattenRanking, type SocketData } from './types';
+import { serverState } from './ranking.svelte';
 
 class Socket {
 	private ws!: Promise<WebSocket>;
@@ -27,46 +28,83 @@ class Socket {
 		ws_.onerror = () => (this.joever = "C'est joever...");
 		ws_.onopen = () => {
 			res(ws_);
-			ws_.send(JSON.stringify({ code: code.state, name: name.state }));
+			if (code.state !== '' && name.state !== '')
+				ws_.send(Encoder.encode({ messageType: 1, code: code.state, username: name.state }));
+			else ws_.send(Encoder.encode({ messageType: 0, code: code.state }));
+			// ws_.send(JSON.stringify({ code: code.state, name: name.state }));
 		};
 		ws_.onmessage = (e) => {
-			console.log(e.data);
+			const msg = Decoder.decode(e.data);
 
-			switch (e.data) {
-				case 'wees geen snuif':
-					this.joever = 'wees geen snuif';
+			switch (msg.messageType) {
+				case 0: {
+					serverState.init(msg);
 					return;
-				case 'nuh uh':
-					if (code.state !== '') error.set('Nuh uh');
+				};
+				case 1: {
+					if (code.state !== "") error.set("Nuh uh");
 					this.askCode = true;
 					return;
-				case 'juh uh':
+				}
+				case 2: {
 					error.clear();
 					this.askCode = false;
-					this.confirmedCode = true;
+					this.confirmedCode =true;
 					if (this.confirmedCode && this.confirmedName) this.locked_in = true;
 					return;
-				case 'name up':
-					if (name.state !== '') error.set('Nuh uh');
+				}
+				case 3: {
+					if (name.state !== "") error.set("Nuh uh");
 					this.askName = true;
 					return;
-				case 'name down':
+				}
+				case 4: {
 					error.clear();
 					this.askName = false;
 					this.confirmedName = true;
 					if (this.confirmedCode && this.confirmedName) this.locked_in = true;
 					return;
-				default: {
-					const parsed: SocketData = JSON.parse(e.data);
-					switch (parsed.type) {
-						case 'all':
-							ranking.state = unflattenRanking(parsed.data);
-							return;
-						default:
-							console.error('Huh?');
-					}
+				}
+				case 5: {
+					serverState.onRating(msg);
+					return;
 				}
 			}
+			// switch (e.data) {
+			// 	case 'wees geen snuif':
+			// 		this.joever = 'wees geen snuif';
+			// 		return;
+			// 	case 'nuh uh':
+			// 		if (code.state !== '') error.set('Nuh uh');
+			// 		this.askCode = true;
+			// 		return;
+			// 	case 'juh uh':
+			// 		error.clear();
+			// 		this.askCode = false;
+			// 		this.confirmedCode = true;
+			// 		if (this.confirmedCode && this.confirmedName) this.locked_in = true;
+			// 		return;
+			// 	case 'name up':
+			// 		if (name.state !== '') error.set('Nuh uh');
+			// 		this.askName = true;
+			// 		return;
+			// 	case 'name down':
+			// 		error.clear();
+			// 		this.askName = false;
+			// 		this.confirmedName = true;
+			// 		if (this.confirmedCode && this.confirmedName) this.locked_in = true;
+			// 		return;
+			// 	default: {
+			// 		const parsed: SocketData = JSON.parse(e.data);
+			// 		switch (parsed.type) {
+			// 			case 'all':
+			// 				ranking.state = unflattenRanking(parsed.data);
+			// 				return;
+			// 			default:
+			// 				console.error('Huh?');
+			// 		}
+			// 	}
+			// }
 		};
 	}
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { ranking } from '$lib/ranking.svelte';
+	import { serverState } from '$lib/ranking.svelte';
 </script>
 
-{#if ranking.state.length === 0}
+{#if serverState.ranking.length === 0}
 	<p>Er is nog kinda niks... :(</p>
 {:else}
 	<div class="flex w-full flex-col">
@@ -11,11 +11,11 @@
 			<p class="w-full font-bold">Bier</p>
 			<p class="w-12 shrink-0">Rating</p>
 		</div>
-		{#each ranking.state as entry, i}
+		{#each serverState.ranking.sort((a, b) => b.rating - a.rating) as entry, i}
 			<div class="flex items-center gap-2">
 				<p class="w-12 shrink-0">#{i + 1}</p>
 				<p class=" w-full overflow-hidden font-bold text-ellipsis whitespace-nowrap">
-					{entry.beer}
+					{entry.beer_id}
 				</p>
 				<p class="w-12 shrink-0">{entry.rating}</p>
 			</div>

@@ -4,7 +4,7 @@
 	import { error } from '$lib/error.svelte';
 	import { name } from '$lib/name.svelte';
 	import { socket } from '$lib/socket.svelte';
-	import { ranking } from '$lib/ranking.svelte';
+	import { serverState } from '$lib/ranking.svelte';
 
 	let { children } = $props();
 
@@ -139,7 +139,7 @@
 									maxlength="32"
 								/>
 								<datalist id="beers">
-									{#each ranking.beers as beer}
+									{#each serverState.beers as beer}
 										<option value={beer}>{beer}</option>
 									{/each}
 								</datalist>
