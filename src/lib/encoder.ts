@@ -7,19 +7,70 @@ import type {
 } from './types';
 
 function encodeCode(msg: CodeClientMessage) {
-	return JSON.stringify(msg);
+	const encoder = new TextEncoder();
+	const codeBytes = encoder.encode(msg.code);
+
+	const bytes = [
+		0, // messageType
+		codeBytes.length, // code length
+		...codeBytes // code
+	];
+
+	return Uint8Array.from(bytes);
+	// return JSON.stringify(msg);
 }
 
 function encodeUsername(msg: UsernameClientMessage) {
-	return JSON.stringify(msg);
+	const encoder = new TextEncoder();
+	const codeBytes = encoder.encode(msg.code);
+	const nameBytes = encoder.encode(msg.username);
+
+	const bytes = [
+		1, // messageType
+		codeBytes.length,
+		...codeBytes,
+		nameBytes.length,
+		...nameBytes
+	];
+
+	return Uint8Array.from(bytes);
+	// return JSON.stringify(msg);
 }
 
 function encodeRatingNewBeer(msg: RatingNewBeerClientMessage) {
-	return JSON.stringify(msg);
+	const encoder = new TextEncoder();
+	const codeBytes = encoder.encode(msg.code);
+	const beerBytes = encoder.encode(msg.beer);
+
+	const bytes = [
+		2, // messageType
+		codeBytes.length,
+		...codeBytes,
+		msg.user_id,
+		msg.rating,
+		beerBytes.length,
+		...beerBytes
+	];
+
+	return Uint8Array.from(bytes);
+	// return JSON.stringify(msg);
 }
 
 function encodeRatingExistingBeer(msg: RatingExistingBeerClientMessage) {
-	return JSON.stringify(msg);
+	const encoder = new TextEncoder();
+	const codeBytes = encoder.encode(msg.code);
+
+	const bytes = [
+		3, // messageType
+		codeBytes.length,
+		...codeBytes,
+		msg.user_id,
+		msg.rating,
+		msg.beer_id
+	];
+
+	return Uint8Array.from(bytes);
+	// return JSON.stringify(msg);
 }
 
 function encode(msg: ClientMessage) {

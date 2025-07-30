@@ -71,6 +71,7 @@ class Socket {
 					return;
 				}
 				case 5: {
+					
 					serverState.onRating(msg);
 					return;
 				}

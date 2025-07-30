@@ -16,35 +16,34 @@ function decodeInitial(buf: Uint8Array): InitialServerMessage {
 	const decoder = new TextDecoder();
 	let offset = 0;
 
-	// 1. message_type
 	const messageType = buf[offset++];
-	if (messageType !== 0) {
-		throw new Error(`Expected messageType 0, got ${messageType}`);
-	}
+	if (messageType !== 0) throw new Error('Expected messageType 0');
 
-	// 2. users
+	// Users
 	const userCount = buf[offset++];
 	const users: User[] = [];
 	for (let i = 0; i < userCount; i++) {
-		const nameLength = buf[offset++];
-		const nameBytes = buf.slice(offset, offset + nameLength);
+		const user_id = buf[offset++];
+		const nameLen = buf[offset++];
+		const nameBytes = buf.slice(offset, offset + nameLen);
 		const name = decoder.decode(nameBytes);
-		users.push({ id: i + 1, name });
-		offset += nameLength;
+		users.push({ id: user_id, name });
+		offset += nameLen;
 	}
 
-	// 3. beers
+	// Beers
 	const beerCount = buf[offset++];
 	const beers: Beer[] = [];
 	for (let i = 0; i < beerCount; i++) {
-		const nameLength = buf[offset++];
-		const nameBytes = buf.slice(offset, offset + nameLength);
-		const beerName = decoder.decode(nameBytes);
-		beers.push({ id: i + 1, name: beerName });
-		offset += nameLength;
+		const beer_id = buf[offset++];
+		const nameLen = buf[offset++];
+		const nameBytes = buf.slice(offset, offset + nameLen);
+		const name = decoder.decode(nameBytes);
+		beers.push({ id: beer_id, name });
+		offset += nameLen;
 	}
 
-	// 4. ratings
+	// Ratings
 	const ratingCount = (buf[offset++] << 8) | buf[offset++];
 	const ratings: Rating[] = [];
 	for (let i = 0; i < ratingCount; i++) {
@@ -54,12 +53,7 @@ function decodeInitial(buf: Uint8Array): InitialServerMessage {
 		ratings.push({ user_id, beer_id, rating });
 	}
 
-	return {
-		messageType: 0,
-		users,
-		beers,
-		ratings
-	};
+	return { messageType: 0, users, beers, ratings };
 }
 
 function decodeCodeReq(): CodeReqServerMessage {
@@ -68,12 +62,10 @@ function decodeCodeReq(): CodeReqServerMessage {
 
 function decodeCodeAcc(): CodeAccServerMessage {
 	return { messageType: 2 };
-	// return JSON.parse(msg);
 }
 
 function decodeUsernameReq(): UsernameReqServerMessage {
 	return { messageType: 3 };
-	// return JSON.parse(msg);
 }
 
 function decodeUsernameAcc(buf: Uint8Array): UsernameAccServerMessage {
@@ -81,7 +73,6 @@ function decodeUsernameAcc(buf: Uint8Array): UsernameAccServerMessage {
 		messageType: 4,
 		user_id: buf[1]
 	};
-	// return JSON.parse(msg);
 }
 
 function decodeRating(buf: Uint8Array): RatingServerMessage {
@@ -98,12 +89,13 @@ function decodeRating(buf: Uint8Array): RatingServerMessage {
 	let username: string | undefined;
 	let beer: string | undefined;
 
+	console.log('STATE');
+	console.log(serverState.users);
+	console.log(serverState.beers);
+
 	// Conditionally decode username if this user_id is new
 	if (!serverState.users.has(user_id)) {
 		const usernameLength = buf[offset++];
-		if (usernameLength < 3 || usernameLength > 32) {
-			throw new Error('Invalid username length');
-		}
 		const usernameBytes = buf.slice(offset, offset + usernameLength);
 		username = decoder.decode(usernameBytes);
 		offset += usernameLength;
@@ -112,9 +104,6 @@ function decodeRating(buf: Uint8Array): RatingServerMessage {
 	// Conditionally decode beer if this beer_id is new
 	if (!serverState.beers.has(beer_id)) {
 		const beerLength = buf[offset++];
-		if (beerLength < 3 || beerLength > 32) {
-			throw new Error('Invalid beer name length');
-		}
 		const beerBytes = buf.slice(offset, offset + beerLength);
 		beer = decoder.decode(beerBytes);
 		offset += beerLength;
@@ -128,12 +117,9 @@ function decodeRating(buf: Uint8Array): RatingServerMessage {
 		username,
 		beer
 	};
-	// return JSON.parse(msg);
 }
 
 function decode(msg: ArrayBuffer): ServerMessage {
-	// TODO look at first byte
-	// const { messageType } = typeof msg === 'string' ? JSON.parse(msg) : { messageType: msg.at(0) };
 	const buf = new Uint8Array(msg);
 	const messageType = buf.at(0);
 
