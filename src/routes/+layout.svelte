@@ -23,7 +23,7 @@
 	</header>
 	<div class="relative flex flex-grow flex-col items-center overflow-y-auto">
 		{#if socket.joever}
-			<p>It's SO Joever</p>
+			<p>{socket.joever}</p>
 		{:else}
 			<div class="flex h-full w-full flex-col items-center gap-2 px-8 py-2">
 				{@render children()}
@@ -118,7 +118,12 @@
 								const rating__ = parseInt(rating_.toString());
 								if (Number.isNaN(rating__)) return error.set('Nuh uh');
 
-								socket.sendRating(beer__, rating__);
+								const beerInfo = serverState.beers.entries().find(([_, b]) => b === beer__);
+								if (beerInfo === undefined) socket.sendRatingNew(beer__, rating__);
+								else {
+									const [beer_id, _] = beerInfo;
+									socket.sendRatingExisting(beer_id, rating__);
+								}
 								adding = false;
 							}}
 							class="flex rounded-md bg-zinc-700 p-px"
@@ -139,7 +144,7 @@
 									maxlength="32"
 								/>
 								<datalist id="beers">
-									{#each serverState.beers as beer}
+									{#each serverState.beers as [_, beer]}
 										<option value={beer}>{beer}</option>
 									{/each}
 								</datalist>
