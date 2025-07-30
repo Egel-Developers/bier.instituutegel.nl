@@ -29,7 +29,7 @@
 				<p class=" w-full overflow-hidden font-bold text-ellipsis whitespace-nowrap">
 					{serverState.beers.get(entry.beer_id)}
 				</p>
-				<p class="w-12 shrink-0">{entry.rating}</p>
+				<p class="w-12 shrink-0">{entry.rating.toFixed(2).replace(/\.?0+$/, '')}</p>
 			</div>
 			{#if thingy === entry.beer_id}
 				<div class="my-2 flex w-full flex-col gap-1 rounded-md bg-zinc-800 px-4 py-2">
@@ -40,7 +40,7 @@
 					{#each entry.ratings.toSorted((a, b) => b.rating - a.rating) as rating}
 						<div class="flex items-center gap-2">
 							<p class="w-full">{serverState.users.get(rating.user_id)}</p>
-							<p class="w-12 shrink-0">{rating.rating}</p>
+							<p class="w-12 shrink-0">{rating.rating.toFixed(2).replace(/\.?0+$/, '')}</p>
 						</div>
 					{/each}
 				</div>
