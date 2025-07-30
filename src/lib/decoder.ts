@@ -89,10 +89,6 @@ function decodeRating(buf: Uint8Array): RatingServerMessage {
 	let username: string | undefined;
 	let beer: string | undefined;
 
-	console.log('STATE');
-	console.log(serverState.users);
-	console.log(serverState.beers);
-
 	// Conditionally decode username if this user_id is new
 	if (!serverState.users.has(user_id)) {
 		const usernameLength = buf[offset++];

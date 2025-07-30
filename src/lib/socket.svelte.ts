@@ -71,53 +71,14 @@ class Socket {
 					return;
 				}
 				case 5: {
-					
 					serverState.onRating(msg);
 					return;
 				}
 			}
-			// switch (e.data) {
-			// 	case 'wees geen snuif':
-			// 		this.joever = 'wees geen snuif';
-			// 		return;
-			// 	case 'nuh uh':
-			// 		if (code.state !== '') error.set('Nuh uh');
-			// 		this.askCode = true;
-			// 		return;
-			// 	case 'juh uh':
-			// 		error.clear();
-			// 		this.askCode = false;
-			// 		this.confirmedCode = true;
-			// 		if (this.confirmedCode && this.confirmedName) this.locked_in = true;
-			// 		return;
-			// 	case 'name up':
-			// 		if (name.state !== '') error.set('Nuh uh');
-			// 		this.askName = true;
-			// 		return;
-			// 	case 'name down':
-			// 		error.clear();
-			// 		this.askName = false;
-			// 		this.confirmedName = true;
-			// 		if (this.confirmedCode && this.confirmedName) this.locked_in = true;
-			// 		return;
-			// 	default: {
-			// 		const parsed: SocketData = JSON.parse(e.data);
-			// 		switch (parsed.type) {
-			// 			case 'all':
-			// 				ranking.state = unflattenRanking(parsed.data);
-			// 				return;
-			// 			default:
-			// 				console.error('Huh?');
-			// 		}
-			// 	}
-			// }
 		};
 	}
 
 	public async sendCredentials() {
-		// (await this.ws).send(
-		// 	JSON.stringify({ locked_in: this.locked_in, code: code.state, name: name.state })
-		// );
 		if (code.state !== '' && name.state !== '')
 			(await this.ws).send(
 				Encoder.encode({ messageType: 1, code: code.state, username: name.state })

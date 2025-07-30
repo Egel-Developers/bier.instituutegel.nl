@@ -40,9 +40,6 @@ class ServerState {
 			};
 		}
 
-		// console.log(tempRanking);
-
-		// tempRanking.sort((a, b) => b.rating - a.rating);
 		this.ranking = tempRanking;
 	}
 
