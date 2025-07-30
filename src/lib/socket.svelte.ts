@@ -25,6 +25,7 @@ class Socket {
 		this.ws = ws;
 
 		const ws_ = new WebSocket(dev ? 'http://localhost:3000' : 'https://api.bier.instituutegel.nl');
+		ws_.binaryType = 'arraybuffer';
 		ws_.onerror = () => (this.joever = "C'est joever...");
 		ws_.onopen = () => {
 			res(ws_);
@@ -34,7 +35,9 @@ class Socket {
 			// ws_.send(JSON.stringify({ code: code.state, name: name.state }));
 		};
 		ws_.onmessage = (e) => {
-			const msg = Decoder.decode(e.data);
+			const msg = Decoder.decode(e.data as ArrayBuffer);
+
+			console.log(msg);
 
 			switch (msg.messageType) {
 				case 0: {

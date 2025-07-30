@@ -1,9 +1,10 @@
+import { SvelteMap } from 'svelte/reactivity';
 import { socket } from './socket.svelte';
 import type { InitialServerMessage, Ranking, RatingServerMessage } from './types';
 
 class ServerState {
-	users = new Map<number, string>();
-	beers = new Map<number, string>();
+	users = new SvelteMap<number, string>();
+	beers = new SvelteMap<number, string>();
 
 	ranking = $state<Ranking>([]);
 
@@ -38,6 +39,8 @@ class ServerState {
 				ratings
 			};
 		}
+
+		// console.log(tempRanking);
 
 		// tempRanking.sort((a, b) => b.rating - a.rating);
 		this.ranking = tempRanking;

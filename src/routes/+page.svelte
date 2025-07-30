@@ -2,6 +2,8 @@
 	import { serverState } from '$lib/ranking.svelte';
 
 	let thingy = $state<number>();
+
+	// $inspect(serverState.users);
 </script>
 
 {#if serverState.ranking.length === 0}
