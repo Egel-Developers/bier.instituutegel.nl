@@ -5,10 +5,9 @@
 	import { name } from '$lib/name.svelte';
 	import { socket } from '$lib/socket.svelte';
 	import { serverState } from '$lib/ranking.svelte';
+	import { adding } from '$lib/adding.svelte';
 
 	let { children } = $props();
-
-	let adding = $state(false);
 </script>
 
 <div class="flex h-[100svh] w-screen flex-col bg-zinc-900 text-zinc-200">
@@ -29,13 +28,17 @@
 				{@render children()}
 			</div>
 
-			{#if socket.askCode || socket.askName || adding}
+			{#if socket.askCode || socket.askName || adding.state}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
 					class="absolute flex h-full w-full items-center justify-center bg-black/70"
 					onclick={(e) => {
-						if (adding && e.target === e.currentTarget) adding = false;
+						if (adding.state && e.target === e.currentTarget) {
+							adding.state = false;
+							adding.beer = '';
+							adding.rating = undefined;
+						}
 					}}
 				>
 					{#if socket.askCode}
@@ -103,7 +106,7 @@
 								>
 							</div>
 						</form>
-					{:else if adding}
+					{:else if adding.state}
 						<form
 							onsubmit={(e) => {
 								e.preventDefault();
@@ -124,7 +127,9 @@
 									const [beer_id, _] = beerInfo;
 									socket.sendRatingExisting(beer_id, rating__);
 								}
-								adding = false;
+								adding.state = false;
+								adding.beer = '';
+								adding.rating = undefined;
 							}}
 							class="flex rounded-md bg-zinc-700 p-px"
 						>
@@ -142,6 +147,7 @@
 									autofocus
 									minlength="3"
 									maxlength="32"
+									bind:value={adding.beer}
 								/>
 								<datalist id="beers">
 									{#each serverState.beers as [_, beer]}
@@ -157,6 +163,7 @@
 									name="rating"
 									placeholder="Rating"
 									required
+									bind:value={adding.rating}
 								/>
 								<div class="w-full rounded-md bg-sky-700/70 p-px">
 									<button
@@ -172,7 +179,7 @@
 			{/if}
 		{/if}
 	</div>
-	{#if !adding}
+	{#if !adding.state}
 		<footer class="flex w-screen flex-col items-center bg-zinc-800 px-8 py-2">
 			{#if error.state !== ''}
 				<div class="rounded-md bg-rose-700 p-px">
@@ -183,7 +190,7 @@
 			{:else}
 				<div class="rounded-md bg-sky-700 p-px">
 					<button
-						onclick={() => (adding = true)}
+						onclick={() => (adding.state = true)}
 						type="button"
 						class="w-full cursor-pointer rounded-md bg-zinc-700 px-4 py-1 font-semibold text-sky-400/60 duration-300 outline-none hover:bg-zinc-700/90"
 						>Verse rating</button

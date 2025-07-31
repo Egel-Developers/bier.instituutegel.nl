@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { adding } from '$lib/adding.svelte';
 	import { serverState } from '$lib/ranking.svelte';
+	import { socket } from '$lib/socket.svelte';
 
 	let thingy = $state<number>();
 
@@ -20,7 +22,8 @@
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				class="flex items-center gap-2"
-				onclick={() => {
+				onclick={(e) => {
+					e.stopPropagation();
 					if (thingy !== entry.beer_id) thingy = entry.beer_id;
 					else thingy = undefined;
 				}}
@@ -43,6 +46,21 @@
 							<p class="w-12 shrink-0">{rating.rating.toFixed(2).replace(/\.?0+$/, '')}</p>
 						</div>
 					{/each}
+					<div class="rounded-md bg-fuchsia-700 p-px">
+						<button
+							type="button"
+							onclick={() => {
+								adding.state = true;
+								adding.beer = serverState.beers.get(entry.beer_id)!;
+
+								const yours = entry.ratings.find((r) => r.user_id === socket.userID);
+								if (yours !== undefined) adding.rating = yours.rating;
+							}}
+							class="w-full cursor-pointer rounded-md bg-zinc-700 px-4 py-1 font-semibold text-fuchsia-400/60 duration-300 outline-none hover:bg-zinc-700/90"
+						>
+							Rating geven
+						</button>
+					</div>
 				</div>
 			{/if}
 		{/each}

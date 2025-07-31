@@ -16,7 +16,7 @@ class Socket {
 	// private confirmedCode = false;
 	private confirmedName = false;
 
-	private userID: number | undefined;
+	public userID: number | undefined;
 
 	public constructor() {
 		if (!browser) return;
