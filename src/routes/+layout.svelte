@@ -110,7 +110,7 @@
 								const form = new FormData(e.currentTarget);
 								const beer_ = form.get('beer');
 								if (beer_ === null) return error.set('Nuh uh');
-								const beer__ = beer_.toString();
+								const beer__ = beer_.toString().trim();
 								if (beer__ === '') return error.set('Nuh uh');
 
 								const rating_ = form.get('rating');
